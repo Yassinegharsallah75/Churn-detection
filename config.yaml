@@ -1,0 +1,68 @@
+# MLOps Pipeline Configuration
+
+project:
+  name: "churn-mlops"
+  version: "1.0.0"
+  random_state: 42
+
+data:
+  raw_path: "data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv"
+  processed_path: "data/processed"
+  reference_path: "data/reference"
+  target_column: "Churn"
+  test_size: 0.2
+  validation_size: 0.1
+
+features:
+  categorical:
+    - "gender"
+    - "SeniorCitizen"
+    - "Partner"
+    - "Dependents"
+    - "PhoneService"
+    - "MultipleLines"
+    - "InternetService"
+    - "OnlineSecurity"
+    - "OnlineBackup"
+    - "DeviceProtection"
+    - "TechSupport"
+    - "StreamingTV"
+    - "StreamingMovies"
+    - "Contract"
+    - "PaperlessBilling"
+    - "PaymentMethod"
+  numerical:
+    - "tenure"
+    - "MonthlyCharges"
+    - "TotalCharges"
+  drop_columns:
+    - "customerID"
+
+model:
+  name: "RandomForestClassifier"
+  params:
+    n_estimators: 200
+    max_depth: 10
+    min_samples_split: 5
+    min_samples_leaf: 2
+    class_weight: "balanced"
+    random_state: 42
+  
+training:
+  cv_folds: 5
+  scoring: "roc_auc"
+
+mlflow:
+  tracking_uri: "http://localhost:5000"
+  experiment_name: "churn_prediction"
+  registered_model_name: "churn_model"
+
+api:
+  host: "0.0.0.0"
+  port: 8000
+  reload: false
+
+monitoring:
+  prometheus_port: 9090
+  drift_threshold: 0.05
+  reference_sample_size: 1000
